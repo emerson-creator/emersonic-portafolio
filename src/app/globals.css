@@ -1,26 +1,74 @@
 @import "tailwindcss";
 
+/* El tema lo controla el atributo data-theme en <html> */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+  --muted: #5c5c5c;
+  --border: #e2e2e2;
+  --panel-top: #e6e6e6;
+  --panel-bottom: #ffffff;
+  --scanline: rgb(0 0 0 / 0.04);
+}
+
+[data-theme="dark"] {
+  --background: #000000;
+  --foreground: #ffffff;
+  --muted: #8f8f8f;
+  --border: #262626;
+  --panel-top: #1c1c1c;
+  --panel-bottom: #000000;
+  --scanline: rgb(255 255 255 / 0.04);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-panel-top: var(--panel-top);
+  --color-panel-bottom: var(--panel-bottom);
+  --color-scanline: var(--scanline);
+
+  --font-sans: var(--font-inter-tight), "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    var(--font-jetbrains-mono), ui-monospace, Menlo, Consolas, monospace;
+
+  --spacing-gutter: clamp(1rem, 2.4vw, 2.25rem);
+  --text-display: clamp(4.5rem, 15vw, 13rem);
+  --text-display--line-height: 0.86;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  --animate-blink: blink 1s steps(1) infinite;
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+  :focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 4px;
+  }
+  ::selection {
+    background: var(--foreground);
+    color: var(--background);
+  }
+}
+/* Text that will animate stays invisible until its animation starts (only if motion is allowed) */
+@media (prefers-reduced-motion: no-preference) {
+  [data-anim="pending"] {
+    visibility: hidden;
+  }
 }
