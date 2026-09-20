@@ -12,6 +12,7 @@ type Props = {
   duration?: number; // ms the whole line takes (default: about 9ms per character)
   cursor?: boolean; // show a cursor while typing
   keepCursor?: boolean; // leave it blinking when done
+  active?: boolean; // start typing when this becomes true (default: true)
 };
 
 export default function TypeText({
@@ -22,12 +23,13 @@ export default function TypeText({
   duration,
   cursor = false,
   keepCursor = false,
+  active = true,
 }: Props) {
   const reduced = useReducedMotion();
   const [count, setCount] = useState<number | null>(null); // null = not started
 
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !active) return;
     const total = duration ?? Math.max(350, text.length * 9);
     let raf = 0;
     const timer = window.setTimeout(() => {
@@ -46,7 +48,7 @@ export default function TypeText({
       window.clearTimeout(timer);
       cancelAnimationFrame(raf);
     };
-  }, [text, reduced, delay, duration]);
+  }, [text, reduced, delay, duration, active]);
 
   const shown = reduced || count === null ? text.length : count;
   const showCursor =
