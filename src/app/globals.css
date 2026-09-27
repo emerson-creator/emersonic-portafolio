@@ -10,6 +10,7 @@
   --border: #e2e2e2;
   --panel-top: #e6e6e6;
   --panel-bottom: #ffffff;
+  --signal: #b7d600;
   --scanline: rgb(0 0 0 / 0.04);
 }
 
@@ -20,6 +21,7 @@
   --border: #262626;
   --panel-top: #1c1c1c;
   --panel-bottom: #000000;
+  --signal: #c8e62e;
   --scanline: rgb(255 255 255 / 0.04);
 }
 
@@ -30,6 +32,7 @@
   --color-border: var(--border);
   --color-panel-top: var(--panel-top);
   --color-panel-bottom: var(--panel-bottom);
+  --color-signal: var(--signal);
   --color-scanline: var(--scanline);
 
   --font-sans: var(--font-inter-tight), "Helvetica Neue", Arial, sans-serif;
@@ -58,17 +61,46 @@
     color-scheme: dark;
   }
   :focus-visible {
-    outline: 2px solid var(--foreground);
+    outline: 2px solid var(--signal);
     outline-offset: 4px;
   }
   ::selection {
-    background: var(--foreground);
-    color: var(--background);
+    background: var(--signal);
+    color: #10120f;
   }
 }
 /* Text that will animate stays invisible until its animation starts (only if motion is allowed) */
 @media (prefers-reduced-motion: no-preference) {
   [data-anim="pending"] {
     visibility: hidden;
+  }
+}
+/* Scroll reveals (Reveal component) */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    transition:
+      opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-reveal="hidden"] {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+}
+
+/* The hero fades and rises as you scroll past it (only where the browser supports scroll-driven animations) */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .hero-exit {
+      animation: hero-exit linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 80%;
+    }
+    @keyframes hero-exit {
+      to {
+        opacity: 0;
+        transform: translateY(-3rem);
+      }
+    }
   }
 }
