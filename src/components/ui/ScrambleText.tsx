@@ -12,6 +12,7 @@ type Props = {
   delay?: number; // ms before the sequence starts
   stagger?: number; // ms between one letter locking in and the next
   settle?: number; // ms each letter scrambles before it locks in
+  active?: boolean; // start scrambling when this becomes true (default: true)
 };
 
 export default function ScrambleText({
@@ -20,6 +21,7 @@ export default function ScrambleText({
   delay = 0,
   stagger = 110,
   settle = 520,
+  active = true,
 }: Props) {
   const reduced = useReducedMotion();
   const [glyphs, setGlyphs] = useState<string[] | null>(null); // null = not started
@@ -27,7 +29,7 @@ export default function ScrambleText({
   const letters = Array.from(text);
 
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !active) return;
     let raf = 0;
     let cancelled = false;
     const els = letterRefs.current;
@@ -79,12 +81,12 @@ export default function ScrambleText({
         if (el) el.style.width = "";
       });
     };
-  }, [text, reduced, delay, stagger, settle]);
+  }, [text, reduced, delay, stagger, settle, active]);
 
   return (
     <span
       className={className}
-      data-anim={!reduced && glyphs === null ? "pending" : undefined}
+      data-anim={!reduced && active && glyphs === null ? "pending" : undefined}
     >
       <span className="sr-only">{text}</span>
       <span aria-hidden="true">
